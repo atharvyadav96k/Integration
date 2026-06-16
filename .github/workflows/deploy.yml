@@ -30,7 +30,7 @@ jobs:
     # 4. Authenticate the cloud runner using your hidden secrets
     - name: Authenticate with HubSpot Portal
       run: |
-        hs auth --token=${{ secrets.HS_PORTAL_AUTH_TOKEN }} --account=${{ secrets.HS_ACCOUNT_ID }} --name=production
+        hs account auth --token=${{ secrets.HS_PORTAL_AUTH_TOKEN }} --account=${{ secrets.HS_ACCOUNT_ID }} --name=production
 
     # 5. Automatically push code, webhooks, and settings components live
     - name: Upload Project Changes
