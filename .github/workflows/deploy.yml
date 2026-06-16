@@ -3,40 +3,26 @@ name: HubSpot deployment
 on:
   push:
     branches:
-      - main
+      - main  # Make sure this matches your active deployment branch
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  hubspot-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./app
-
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install HubSpot CLI Action
+        uses: HubSpot/hubspot-project-actions/install-hubspot-cli@v1.0.0
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Install HubSpot CLI
-      run: npm install -g @hubspot/cli
-
-    - name: Inline Authentication File
-      run: |
-        echo '{
-          "defaultPortal": "production",
-          "portals": [
-            {
-              "name": "production",
-              "portalId": ${{ secrets.HS_ACCOUNT_ID }},
-              "token": "${{ secrets.HS_PORTAL_AUTH_TOKEN }}"
-            }
-          ]
-        }' > hubspot.config.json
-
-    - name: Upload Project Changes
-      run: hs project upload --account=production
+      - name: HubSpot Project Upload
+        uses: HubSpot/hubspot-project-actions/project-upload@v1.0.0
+        with:
+          project_dir: "./app"
+        env:
+          HUBSPOT_ACCOUNT_ID: ${{ secrets.HS_ACCOUNT_ID }}
+          HUBSPOT_PERSONAL_ACCESS_KEY: ${{ secrets.HS_PORTAL_AUTH_TOKEN }}
