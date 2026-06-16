@@ -14,7 +14,7 @@ on:
         required: true
       GCP_SA_EMAIL:
         required: true
-      GCP_WIF_PROVIDER:
+      GCP_WFI_PROVIDER:
         required: true
       GCP_REGION:
         required: true
