@@ -1,0 +1,35 @@
+name: GCP Functions Deployment
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      hubspot-wehook: ${{ steps.filter.outputs.hubspot-wehook }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            hubspot-wehook:
+              - 'hubspot/hubspot-wehook/**'
+
+  deploy-hubspot-wehook:
+    needs: changes
+    if: needs.changes.outputs.hubspot-wehook == 'true'
+    permissions:
+      id-token: write
+      contents: read
+    uses: ./.github/workflows/function-deploy.yml
+    with:
+      working-directory: hubspot/hubspot-wehook
+      gcp_region: ${{ vars.GCP_REGION }}
+    secrets: inherit

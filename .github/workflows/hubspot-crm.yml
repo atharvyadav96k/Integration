@@ -1,0 +1,25 @@
+name: HubSpot Deployment
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install HubSpot CLI
+        uses: HubSpot/hubspot-project-actions/install-hubspot-cli@v1.0.0
+
+      - name: HubSpot Project Upload
+        uses: HubSpot/hubspot-project-actions/project-upload@v1.0.0
+        with:
+          project_dir: "./app"
+          account_id: ${{ secrets.HS_ACCOUNT_ID }}
+          personal_access_key: ${{ secrets.HS_PORTAL_AUTH_TOKEN }}

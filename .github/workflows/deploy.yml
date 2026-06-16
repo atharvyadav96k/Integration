@@ -1,28 +1,51 @@
-name: HubSpot deployment
+name: CICD
 
 on:
   push:
     branches:
-      - main  # Matches the branch from your latest update
+      - main
+
 
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: hubspot-deploy-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Install HubSpot CLI Action
-        uses: HubSpot/hubspot-project-actions/install-hubspot-cli@v1.0.0
+    changes:
+        runs-on: ubuntu-latest
+        outputs:
+            hubspot-crm: ${{ steps.filter.outputs.hubspot-crm }}
+            hubspot-functions: ${{ steps.filter.outputs.hubspot-functions }}
 
-      - name: HubSpot Project Upload
-        uses: HubSpot/hubspot-project-actions/project-upload@v1.0.0
+        steps:
+          - uses: actions/checkout@v4
+          - uses: dorny/paths-filter@v3
+            id: filter
+            with:
+              filters: |
+                hubspot-crm:
+                  - 'app/**'
+                hubspot-functions:
+                  - 'hubspot/**'
+            
+    hubspot-crm:
+        needs: changes
+        if: needs.changes.outputs.hubspot-crm == 'true'
+        permissions: 
+            id-token: write
+            contents: read
+        uses: './.github/workflows/hubspot-crm.yml'
         with:
-          project_dir: "./app"
-          # Passing them as direct action arguments ensures the runner catches them!
-          account_id: ${{ secrets.HS_ACCOUNT_ID }}
-          personal_access_key: ${{ secrets.HS_PORTAL_AUTH_TOKEN }}
+            working-directory: hubspot
+        secrets: inherit  
+
+    hubspot-functions:
+        needs: changes
+        if: needs.changes.outputs.hubspot-functions == 'true'
+        permissions:
+            id-token: write
+            contents: read
+        uses: './.github/workflows/hubspot-functions.yml'
+        with:
+            working-directory: hubspot
+        secrets: inherit 
