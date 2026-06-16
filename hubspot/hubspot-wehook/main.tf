@@ -63,6 +63,7 @@ resource "google_cloudfunctions2_function" "hubspot_webhook" {
   }
 }
 
+
 resource "google_cloud_run_service_iam_member" "public_invoker" {
   project  = var.project_id
   location = var.region
