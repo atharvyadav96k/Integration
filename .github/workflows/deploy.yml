@@ -3,8 +3,7 @@ name: HubSpot deployment
 on:
   push:
     branches:
-      - main  # Make sure this matches your active deployment branch
-
+      - main
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
@@ -24,5 +23,6 @@ jobs:
         with:
           project_dir: "./app"
         env:
+          # This connects HubSpot's action inputs directly to your existing secrets!
           HUBSPOT_ACCOUNT_ID: ${{ secrets.HS_ACCOUNT_ID }}
           HUBSPOT_PERSONAL_ACCESS_KEY: ${{ secrets.HS_PORTAL_AUTH_TOKEN }}
