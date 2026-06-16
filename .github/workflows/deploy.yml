@@ -25,9 +25,18 @@ jobs:
     - name: Install HubSpot CLI
       run: npm install -g @hubspot/cli
 
+    - name: Inline Authentication File
+      run: |
+        echo '{
+          "defaultPortal": "production",
+          "portals": [
+            {
+              "name": "production",
+              "portalId": ${{ secrets.HS_ACCOUNT_ID }},
+              "token": "${{ secrets.HS_PORTAL_AUTH_TOKEN }}"
+            }
+          ]
+        }' > hubspot.config.json
+
     - name: Upload Project Changes
-      # We inject the authentication details directly into the execution environment here
-      env:
-        HUBSPOT_PORTAL_ID: ${{ secrets.HS_ACCOUNT_ID }}
-        HUBSPOT_ACCESS_TOKEN: ${{ secrets.HS_PORTAL_AUTH_TOKEN }}
-      run: hs project upload
+      run: hs project upload --account=production
