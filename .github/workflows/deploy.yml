@@ -25,9 +25,7 @@ jobs:
     - name: Install HubSpot CLI
       run: npm install -g @hubspot/cli
 
-    # We explicitly force this step to run at the root system level (/home/runner)
     - name: Create HubSpot Config File
-      working-directory: /home/runner
       run: |
         mkdir -p .config/hubspot
         echo '{
@@ -42,4 +40,6 @@ jobs:
         }' > .config/hubspot/hubspot.config.json
 
     - name: Upload Project Changes
+      env:
+        HS_CONFIG_FILE: ${{ github.workspace }}/app/.config/hubspot/hubspot.config.json
       run: hs project upload --account=production
