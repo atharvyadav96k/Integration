@@ -21,10 +21,6 @@ variable "region" {
   default = "us-central1"
 }
 
-variable "hubspot_client_secret" {
-  type      = string
-  sensitive = true
-}
 
 resource "google_storage_bucket" "function_bucket" {
   name                        = "${var.project_id}-hubspot-webhook-src"
@@ -64,9 +60,6 @@ resource "google_cloudfunctions2_function" "hubspot_webhook" {
     max_instance_count = 10
     available_memory   = "256M"
     timeout_seconds    = 60
-    environment_variables = {
-      HUBSPOT_CLIENT_SECRET = var.hubspot_client_secret
-    }
   }
 }
 

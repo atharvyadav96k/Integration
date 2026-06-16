@@ -31,5 +31,4 @@ jobs:
     uses: ./.github/workflows/function-deploy.yml
     with:
       working-directory: hubspot/hubspot-wehook
-      gcp_region: ${{ vars.GCP_REGION }}
     secrets: inherit
