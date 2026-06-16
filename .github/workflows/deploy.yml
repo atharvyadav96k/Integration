@@ -3,7 +3,7 @@ name: HubSpot deployment
 on:
   push:
     branches:
-      - staging
+      - main
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
