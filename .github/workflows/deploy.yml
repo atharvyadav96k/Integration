@@ -25,36 +25,11 @@ jobs:
     - name: Install HubSpot CLI
       run: npm install -g @hubspot/cli
 
-    name: HubSpot deployment
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  hubspot-deploy:
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./app
-
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-
-    - name: Install HubSpot CLI
-      run: npm install -g @hubspot/cli
-
+    # We explicitly force this step to run at the root system level (/home/runner)
     - name: Create HubSpot Config File
+      working-directory: /home/runner
       run: |
-        mkdir -p ~/.config/hubspot
+        mkdir -p .config/hubspot
         echo '{
           "defaultPortal": "production",
           "portals": [
@@ -64,9 +39,7 @@ jobs:
               "token": "${{ secrets.HS_PORTAL_AUTH_TOKEN }}"
             }
           ]
-        }' > ~/.config/hubspot/hubspot.config.json
+        }' > .config/hubspot/hubspot.config.json
 
-    - name: Upload Project Changes
-      run: hs project upload --account=production
     - name: Upload Project Changes
       run: hs project upload --account=production
