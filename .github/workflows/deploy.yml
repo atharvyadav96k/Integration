@@ -3,7 +3,7 @@ name: HubSpot deployment
 on:
   push:
     branches:
-      - main
+      - staging
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
@@ -11,6 +11,11 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    env:
+      HUBSPOT_ACCOUNT_ID: ${{ secrets.HS_ACCOUNT_ID }}
+      HUBSPOT_PERSONAL_ACCESS_KEY: ${{ secrets.HS_PORTAL_AUTH_TOKEN }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,7 +27,3 @@ jobs:
         uses: HubSpot/hubspot-project-actions/project-upload@v1.0.0
         with:
           project_dir: "./app"
-        env:
-          # This connects HubSpot's action inputs directly to your existing secrets!
-          HUBSPOT_ACCOUNT_ID: ${{ secrets.HS_ACCOUNT_ID }}
-          HUBSPOT_PERSONAL_ACCESS_KEY: ${{ secrets.HS_PORTAL_AUTH_TOKEN }}
