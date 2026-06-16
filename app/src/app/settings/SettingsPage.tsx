@@ -1,5 +1,5 @@
 import React from "react";
-import { EmptyState, Text } from "@hubspot/ui-extensions";
+import { EmptyState } from "@hubspot/ui-extensions";
 import { hubspot } from "@hubspot/ui-extensions";
 
 hubspot.extend(({ context }) => {
@@ -8,8 +8,10 @@ hubspot.extend(({ context }) => {
 
 const NewSettingsPage = ({ context }) => {
   return (
-    <EmptyState title="Nothing here yet!" layout="vertical">
-      <Text>Build your application settings page here!</Text>
-    </EmptyState>
+    <EmptyState
+      title="Nothing here yet!"
+      layout="vertical"
+      description="Build your application settings page here!"
+    />
   );
 };
