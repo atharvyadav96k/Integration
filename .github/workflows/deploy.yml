@@ -1,9 +1,9 @@
 name: HubSpot deployment
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
   hubspot-deploy:
@@ -17,21 +17,27 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    # 2. Setup standard execution environment
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
 
-    # 3. Download the newest HubSpot framework tools
     - name: Install HubSpot CLI
       run: npm install -g @hubspot/cli
 
-    # 4. Authenticate the cloud runner using your hidden secrets
-    - name: Authenticate with HubSpot Portal
+    - name: Create HubSpot Config File
       run: |
-        hs account auth --token=${{ secrets.HS_PORTAL_AUTH_TOKEN }} --account=${{ secrets.HS_ACCOUNT_ID }} --name=production
+        mkdir -p ~/.config/hubspot
+        echo '{
+          "defaultPortal": "production",
+          "portals": [
+            {
+              "name": "production",
+              "portalId": ${{ secrets.HS_ACCOUNT_ID }},
+              "token": "${{ secrets.HS_PORTAL_AUTH_TOKEN }}"
+            }
+          ]
+        }' > ~/.config/hubspot/hubspot.config.json
 
-    # 5. Automatically push code, webhooks, and settings components live
     - name: Upload Project Changes
       run: hs project upload --account=production
